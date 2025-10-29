@@ -14,8 +14,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AuthContext } from '../contexts/AuthContext';
 import { Snackbar } from '@mui/material';
-
-
+import { useNavigate } from 'react-router-dom';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -33,19 +32,16 @@ export default function Authentication() {
 
 
     const [formState, setFormState] = React.useState(0);
-
     const [open, setOpen] = React.useState(false)
-
+    const navigate = useNavigate();
 
     const { handleRegister, handleLogin } = React.useContext(AuthContext);
 
     let handleAuth = async () => {
         try {
             if (formState === 0) {
-
-                let result = await handleLogin(username, password)
-
-
+                await handleLogin(username, password);
+                navigate('/home');
             }
             if (formState === 1) {
                 let result = await handleRegister(name, username, password);
@@ -53,14 +49,13 @@ export default function Authentication() {
                 setUsername("");
                 setMessage(result);
                 setOpen(true);
-                setError("")
-                setFormState(0)
-                setPassword("")
+                setError("");
+                // Navigate to home after successful registration
+                navigate('/home');
             }
         } catch (err) {
-
             console.log(err);
-            let message = (err.response.data.message);
+            let message = err.response?.data?.message || "An error occurred";
             setError(message);
         }
     }
